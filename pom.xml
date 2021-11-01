@@ -64,7 +64,8 @@
     <module>zookeeper-client</module>
     <module>zookeeper-recipes</module>
     <module>zookeeper-assembly</module>
-      <module>luban-vip</module>
+    <module>luban-vip</module>
+      <module>zk-api</module>
   </modules>
 
   <scm>
