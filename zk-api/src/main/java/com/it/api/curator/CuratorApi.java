@@ -8,7 +8,7 @@ import org.apache.zookeeper.CreateMode;
 
 public class CuratorApi {
 
-    private static final String ZK_HOST = "192.168.16.170:12181";
+    private static final String ZK_HOST = "192.168.16.170:12181,192.168.16.171:12181,192.168.16.173:12181";
 
     public static void main(String[] args) {
         CuratorFramework curatorFramework =

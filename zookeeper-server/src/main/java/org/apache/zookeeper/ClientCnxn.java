@@ -449,7 +449,9 @@ public class ClientCnxn {
     }
 
     public void start() {
+        //开启连接请求发送线程
         sendThread.start();
+        //开启事件处理线程
         eventThread.start();
     }
 
@@ -1246,10 +1248,10 @@ public class ClientCnxn {
                         } else {
                             serverAddress = hostProvider.next(1000);
                         }
-                        // 简历连接，包括两步
-                        // 1. 简历socket连接
+                        // 连接，包括两步
+                        // 1. socket连接
                         // 2. 连接初始化，primeConnection()
-                        // 3. 这里没有发送任何数据，只是可能把socket连接建立好了   nio
+                        // 3. 这里没有发送任何数据，只是可能把socket连接建立好了 nio
                         startConnect(serverAddress);
                         clientCnxnSocket.updateLastSendAndHeard();
                     }

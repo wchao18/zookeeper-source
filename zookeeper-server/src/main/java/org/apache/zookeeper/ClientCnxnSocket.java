@@ -112,7 +112,7 @@ abstract class ClientCnxnSocket {
     }
 
     void updateLastSendAndHeard() {
-        // 最后一次发送数据时间
+        // 最后一次发送数据时间 单位毫秒
         this.lastSend = now;  // socket 最后一次发送数据的事件
         // 最后一次接受数据时间
         this.lastHeard = now; // 接收

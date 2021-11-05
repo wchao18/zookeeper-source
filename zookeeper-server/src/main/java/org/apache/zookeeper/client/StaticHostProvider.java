@@ -130,7 +130,7 @@ public final class StaticHostProvider implements HostProvider {
         if (serverAddresses.isEmpty()) {
             throw new IllegalArgumentException("A HostProvider may not be empty!");
         }
-        this.serverAddresses = shuffle(serverAddresses);
+        this.serverAddresses = shuffle(serverAddresses);//第一次打散
         currentIndex = -1;
         lastIndex = -1;
     }
@@ -142,6 +142,7 @@ public final class StaticHostProvider implements HostProvider {
             if (resolvedAddresses.isEmpty()) {
                 return address;
             }
+            //解析域名获取IP地址，打乱IP地址，取第一个
             Collections.shuffle(resolvedAddresses);
             return new InetSocketAddress(resolvedAddresses.get(0), address.getPort());
         } catch (UnknownHostException e) {
@@ -317,6 +318,7 @@ public final class StaticHostProvider implements HostProvider {
         // and either the probability tells us to connect to one of the new
         // servers or if we already
         // tried all the old servers
+        //先从老集合中尝试，都没有连接成功，再从新集合中尝试
         if (((currentIndexNew + 1) < newServers.size()) && (takeNew || (currentIndexOld + 1) >= oldServers.size())) {
             ++currentIndexNew;
             return newServers.get(currentIndexNew);
@@ -336,7 +338,7 @@ public final class StaticHostProvider implements HostProvider {
         InetSocketAddress addr;
 
         synchronized (this) {
-            if (reconfigMode) {
+            if (reconfigMode) { //配置文件中：reconfigEnable
                 addr = nextHostInReconfigMode();
                 if (addr != null) {
                     currentIndex = serverAddresses.indexOf(addr);
@@ -346,12 +348,13 @@ public final class StaticHostProvider implements HostProvider {
                 reconfigMode = false;
                 needToSleep = (spinDelay > 0);
             }
-            ++currentIndex;
+             ++currentIndex;
             if (currentIndex == serverAddresses.size()) {
                 currentIndex = 0;
             }
             addr = serverAddresses.get(currentIndex);
             // 当把hostprovider中的所有地址都尝试去连了一遍之后，仍然没有连接上，这时就需要睡眠
+            //currentIndex == lastIndex 相等情况下只有单机
             needToSleep = needToSleep || (currentIndex == lastIndex && spinDelay > 0);
             if (lastIndex == -1) {
                 // We don't want to sleep on the first ever connect attempt.

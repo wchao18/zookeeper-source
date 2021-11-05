@@ -287,7 +287,7 @@ public class ClientCnxnSocketNIO extends ClientCnxnSocket {
      * @throws IOException
      */
     void registerAndConnect(SocketChannel sock, InetSocketAddress addr) throws IOException {
-        // 注册一个CONNECT事件
+        // 注册一个CONNECT事件,客户端连接为connnect
         sockKey = sock.register(selector, SelectionKey.OP_CONNECT);
         // 尝试去连接一下
         boolean immediateConnect = sock.connect(addr);
@@ -299,6 +299,7 @@ public class ClientCnxnSocketNIO extends ClientCnxnSocket {
 
     @Override
     void connect(InetSocketAddress addr) throws IOException {
+        //创建NIO的socketChannel
         SocketChannel sock = createSock();
         try {
             registerAndConnect(sock, addr);
