@@ -46,6 +46,7 @@ public class ExpiryQueue<E> {
     private final int expirationInterval; // 就是tickTime
 
     public ExpiryQueue(int expirationInterval) {
+        //会话桶大小
         this.expirationInterval = expirationInterval;
         nextExpirationTime.set(roundToNextInterval(Time.currentElapsedTime()));
     }
@@ -82,6 +83,8 @@ public class ExpiryQueue<E> {
      *                 changed, or null if unchanged
      */
     // SesessionImpl
+    //当client 与 server 交互,连接请求、读写操作、心跳
+    //换桶操作
     public Long update(E elem, int timeout) {  // 30s
         // 之前保存的session的过期时间点
         Long prevExpiryTime = elemMap.get(elem);

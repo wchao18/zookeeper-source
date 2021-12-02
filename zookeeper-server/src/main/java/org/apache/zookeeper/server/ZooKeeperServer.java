@@ -1058,6 +1058,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
                     Long.toHexString(cnxn.getSessionId()),
                     cnxn.getSessionTimeout(),
                     cnxn.getRemoteSocketAddress());
+                //启用接受到的连接
                 cnxn.enableRecv();
             } else {
 
@@ -1065,6 +1066,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
                     "Invalid session 0x{} for client {}, probably expired",
                     Long.toHexString(cnxn.getSessionId()),
                     cnxn.getRemoteSocketAddress());
+                //向client发送关闭的连接响应
                 cnxn.sendBuffer(ServerCnxnFactory.closeConn);
             }
 

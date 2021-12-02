@@ -106,10 +106,12 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
     public SessionTrackerImpl(SessionExpirer expirer, ConcurrentMap<Long, Integer> sessionsWithTimeout, int tickTime, long serverId, ZooKeeperServerListener listener) {
         super("SessionTracker", listener);
         this.expirer = expirer;
+        //会话过期队列
         this.sessionExpiryQueue = new ExpiryQueue<SessionImpl>(tickTime);
         this.sessionsWithTimeout = sessionsWithTimeout;  // 持久化的时候，只持久化了sessionId和Timeout，不用持久化SessionImpl
         this.nextSessionId.set(initializeNextSessionId(serverId));  //
         for (Entry<Long, Integer> e : sessionsWithTimeout.entrySet()) {
+            //key为seesionId,value为会话对应的timeout
             trackSession(e.getKey(), e.getValue());
         }
 
@@ -150,11 +152,13 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
         return sw.toString();
     }
 
+    //对过期会话进行清理
+    //这个清理操作是定时完成的，并不是通过定时器完成的，是通过等待完成
     @Override
     public void run() {
         try {
             while (running) {
-                // 0
+                //计算当前时间距离清理时间的时间差 即等待时间
                 long waitTime = sessionExpiryQueue.getWaitTime();  //
                 if (waitTime > 0) {
                     Thread.sleep(waitTime);
@@ -273,7 +277,6 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
         // 1. 先生成一个SessionImpl对象，并放入sessionsById中保存
         // 2. 更新sessionExpiryQueue中保存的当前session的过期时间点
 
-        //
         SessionImpl session = sessionsById.get(id);
         if (session == null) {
             // sessionId
@@ -300,7 +303,7 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
                 + " session 0x" + Long.toHexString(id) + " " + sessionTimeout);
         }
 
-
+        //更新session过期时间
         updateSessionExpiry(session, sessionTimeout);
         return added;
     }
